@@ -1,0 +1,250 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: tobor-build
+  title: Tobor Build
+  description: Tobor's builds onboard
+spec:
+  owner: unimatrix
+  type: resource
+  parameters:
+  - title: "Tobor's Build"
+    required:
+      - buildType
+    properties:
+      buildBoxType:
+        title: Build Box Type
+        type: string
+        description: Kind of Build VM o BM
+        default: VM
+        enum:
+          - VM
+          - BM
+        enumNames:
+          - Virtual Machine
+          - Barrel Metal
+    dependencies:
+      buildBoxType:
+        oneOf:
+          - required:
+            #- clusterEnv
+            - name
+            #- buildType
+            #- Datacenter
+            - appBEVLAN
+            properties:
+              buildBoxType:
+                const: VM
+                
+              clusterEnv:
+                title: Cluster Environment
+                type: string
+                description: "Cluster build example: 'Prod', 'Poc', 'LT', 'Int'"
+                default: POC
+                enum:
+                  - POC
+                  - Int
+                  - LT
+                  - PROD
+                uniqueItems: true
+              name:
+                title: Name
+                type: string
+                description: Build directory name.
+                maxLength: 25
+                ui:autofocus: true
+                #ui:help: 'Any aditional message to add.'
+              buildType:
+                title: Build Type
+                type: string
+                description: Cluster Build Type.
+                default: app
+                enum:
+                  - app
+              Datacenter:
+                title: Datacenter
+                type: string
+                description: Datacenter.
+                #default: IAD1
+                enum:
+                  - IAD1
+                  - IAD3
+                  - IAD4
+                  - EU1
+              appBEVLAN:
+                title: BE VLAN
+                type: number
+                description: Backend VLAN.
+              appFEVLAN:
+                title: FE VLAN
+                type: number
+                description: Front End VLAN.
+              storageVLAN:
+                title: Storage VLAN
+                type: number
+                description: Storage VLAN.
+              appCount:
+                title: Quantity
+                type: number
+                description: Number of servers to build.
+              title:
+                title: Title
+                type: string
+                description: "Required build title example: 'MADDEN','FIFA','NBA'"
+                #we can setup a defined list
+              vmOwner:
+                title: VM Owner
+                type: string
+                description: "VM owner for current build example: 'Madden'"
+                #can we use a def. list?
+              vmGroup:
+                title: VM Group
+                type: string
+                description: "VM group for current build example: 'Madden 21'"
+              franchise:
+                title: Franchise
+                type: string
+                description: "Franchise for current build example: 'Madden'"
+              chefPolicyGroup:
+                title: Chef Policy Group
+                type: string
+                description: "Chef policy expects: 'title-environment' example: 'madden21 Lt'"
+              chefServerType:
+                title: Chef Server Type
+                type: string
+                description: "Chef server env type for current build expects: 'production','integration'"
+                #can we use list?
+              defaultBlazeUserList:
+                title: Default Blaze User List
+                type: array
+                minItems: 0
+                ui:options:
+                  addable: true
+                  orderable: true
+                  removable: true
+                items:
+                  type: object
+                  properties:
+                    user:
+                      title: User
+                      type: string
+                      description: Blaze User Name
+                      #default: value3
+                      #enum:
+                      #  - value1
+                      #  - value2
+                      #  - value3
+                    id:
+                      title: ID
+                      type: number
+                      description: Blaze User ID
+              appChefVer:
+                title: App Chef Version
+                type: number
+                description: Chef version required for current build
+                default: 17
+                enum:
+                  - 12
+                  - 16
+                  - 17
+              techOpsBaseVer:
+                title: TechOps Base Version
+                type: number
+                description: Techops Base Policy Version
+                ui:help: example: 4.0.0 *default is latest tag*
+              clusterIndex:
+                title: Cluster Index
+                type: number
+                description: Select Cluster Index based on Datacenter
+                ui:help: 'For Reference: https://src.ent.ea.com/terraform-modules/techops/-/blob/master/CHANGELOG.md#cluster-index-table'
+              iteration:
+                title: Iteration
+                type: number
+                description: "Iteration or Year example: '2020', '2021'"
+              d42SubEnv:
+                title: D42 Subenv
+                type: string
+                description: "Sub environment of the build example: 'DevTest', 'GenCert'"
+              d42Studio:
+                title: D42 Studio
+                type: string
+                description: "Studio Name from buildsheet example: 'Maxis', 'EA Sports'"
+              d42Service:
+                title: D42 Service
+                type: string
+                description: "Service Name from Buildsheet example: 'Blaze', 'Database-MySQL'"
+              d42ProjectCode:
+                title: D42 Projectcode
+                type: string
+                description: "Project Code from Buildsheet example: '110696', '110697'"
+              certAuth:
+                title: Cert Authority
+                type: number
+                description: SSL Authority
+                enum:
+                  - 2011
+                  - 2013
+                  - 2015
+                #ui:help: '2015 or 2013 or 2011 example: 2015'
+              mntDir:
+                title: Mount Directory
+                type: string
+                description: Storage mount directory path
+                ui:help: 'example: "["bckp","temp","data","log]"'
+              volSize:
+                title: Volume Size
+                type: string
+                description: Storage Volume Size in GB
+                ui:help: 'example: "["10","20","20","10"]"'
+              aggrType:
+                title: Aggr Type
+                type: string
+                description: HDD or SSD
+                ui:help: 'example: "["hdd","ssd","hdd","ssd"]"'
+              addStorage:
+                title: Add storage
+                type: boolean
+                #description: Default option to add storage without chef
+                default: false
+                ui:help: Default option to add storage without chef
+              
+                  
+          - required:
+              - clusterEnv
+              #- name
+              #- buildType
+              #- Datacenter
+              #- appBEVLAN
+            properties:
+              buildBoxType:
+                const: BM
+              clusterEnv:
+                title: Cluster Environment
+                type: string
+                description: "Cluster build example: 'Prod', 'Poc', 'LT', 'Int'"
+                enum:
+                  - POC
+                  - Int
+                  - LT
+                  - PROD
+              uniqueItems: true
+
+  - title: Choose a location
+    required:
+      - repoUrl
+    properties:
+      repoUrl:
+        title: Repository Location
+        type: string
+        ui:field: RepoUrlPicker
+        ui:options:
+          allowedHosts:
+            - github.com
+steps:
+  - id: fetch-base
+    name: Fetch Base
+    action: fetch:template
+    input:
+      url: ./template
+      values:
+        name: ${{parameters.name}}

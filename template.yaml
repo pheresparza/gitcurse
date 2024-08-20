@@ -151,7 +151,7 @@ spec:
                 title: TechOps Base Version
                 type: number
                 description: Techops Base Policy Version
-                ui:help: 'example: 4.0.0 *default is latest tag*'
+                ui:help: "example: 4.0.0 *default is latest tag*"
               clusterIndex:
                 title: Cluster Index
                 type: number

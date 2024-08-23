@@ -35,6 +35,7 @@ spec:
             - Int
             - LT
             - PROD
+            - TEST
           uniqueItems: true
         #ui:widget: checkboxes
         name:

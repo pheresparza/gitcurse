@@ -8,243 +8,559 @@ spec:
   owner: unimatrix
   type: resource
   parameters:
-  - title: "Tobor's Build"
-    required:
-      - buildType
-    properties:
-      buildBoxType:
-        title: Build Box Type
-        type: string
-        description: Kind of Build VM o BM
-        default: VM
-        enum:
-          - VM
-          - BM
-        enumNames:
-          - Virtual Machine
-          - Barrel Metal
-    dependencies:
-      buildBoxType:
-        oneOf:
-          - required:
-            #- clusterEnv
-            - name
-            #- buildType
-            #- Datacenter
-            - appBEVLAN
+    - title: Blaze VM Builder
+      required:
+        - cluster_env
+        - name
+        - build_type
+        - datacenter
+        - app_be_vlan
+        - app_fe_vlan
+        - storage_vlan
+        - app_cnt
+        - title
+        - vm_owner
+        - vm_group
+        - franchise
+        - chef_policy_group
+        - chef_server_type
+        - name_prefix
+      properties:
+        cluster_env:
+          title: Cluster Environment
+          type: string
+          description: "Cluster build example: 'PROD', 'POC', 'LT', 'Int'"
+          enum:
+            - POC
+            - Int
+            - LT
+            - PROD
+          uniqueItems: true
+        #ui:widget: checkboxes
+        name:
+          title: Name
+          type: string
+          description: Build directory name.
+          maxLength: 25
+          ui:autofocus: true
+          #ui:help: 'Any aditional message to add.'
+        build_type:
+          title: Build Type
+          type: string
+          description: Cluster Build Type.
+          default: 'app'
+        datacenter:
+          title: Datacenter
+          type: string
+          description: Datacenter site.
+          enum:
+            - IAD1
+            - IAD3
+            #- IAD4
+            - EU1
+          uniqueItems: true
+        #app_be_vlan:
+        #  title: BE VLAN
+        #  type: integer
+        #  description: Backend VLAN.
+        #app_fe_vlan:
+        #  title: FE VLAN
+        #  type: integer
+        #  description: Front End VLAN.
+        #  default: 0
+        #storage_vlan:
+        #  title: Storage VLAN
+        #  type: integer
+        #  description: Storage VLAN.
+        #  default: 0
+        app_cnt:
+          title: Quantity
+          type: integer
+          description: Number of servers to build.
+          minimum: 1
+          maximum: 25
+        title:
+          title: Title
+          type: string
+          description: Required build title.
+          ui:help: "example: 'MADDEN','FIFA','NBA'"
+          #we can setup a defined list
+        vm_owner:
+          title: VM Owner
+          type: string
+          description: VM owner for current build.
+          ui:help: "example: 'Madden'"
+          #can we use a def. list?
+        vm_group:
+          title: VM Group
+          type: string
+          description: VM group for current build.
+          ui:help: "example: 'Madden 21'"
+        franchise:
+          title: Franchise
+          type: string
+          description: Franchise for current build.
+          ui:help: "example: 'Madden'"
+        chef_policy_group:
+          title: Chef Policy Group
+          type: string
+          description: "Chef policy expects: 'title-environment'"
+          ui:help: "example: 'madden21 Lt'"
+        chef_server_type:
+          title: Chef Server Type
+          type: string
+          description: Chef server env type for current build.
+          ui:help: "expects: 'production','integration'"
+          enum:
+            - production
+            - integration
+          #can we use list?
+        name_prefix:
+          title: Name Prefix
+          type: string
+          description: Name of the hostname.
+          ui:help: "example: 'm21lt'"
+      dependencies:
+        datacenter:
+          allOf:
+            - if:
+                properties:
+                  datacenter:
+                    const: EU1
+              then:
+                properties:
+                  app_be_vlan:
+                    title: EU1 BE VLAN
+                    type: integer
+                    description: Backend VLAN.
+                    enum:
+                      - 291
+                      - 701
+                      - 901
+                      - 902
+                      - 907
+                      - 908
+                      - 909
+                  app_fe_vlan:
+                    title: EU1 FE VLAN
+                    type: integer
+                    description: Frontend VLAN.
+                    default: 0
+                    enum:
+                      - 0
+                      - 1502
+                      - 3104
+                      - 3105
+                      - 3108
+                      - 3117
+                      - 3122
+                      - 3128
+                      - 3132
+                      - 3134
+                  storage_vlan:
+                    title: EU1 Storage VLAN
+                    type: integer
+                    description: Storage VLAN.
+                    default: 0
+                    enum:
+                      - 0
+                      - 1202
+                      - 1204
+                  cluster_index:
+                    title: EU1 Cluster Index
+                    type: integer
+                    description: Select Cluster Index based on Datacenter.
+                    enum:
+                      - 0
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                      - 5
+                      - 6
+                    enumNames:
+                      - EU1D-CORESVC
+                      - EU1R-1D05
+                      - EU1R-1D01
+                      - EU1R-1D02
+                      - EU1R-1D03
+                      - EU1R-1C01
+                      - EU1R-1C02
+                required:
+                  - app_be_vlan
+                  - app_fe_vlan
+                  - storage_vlan
+            - if:
+                properties:
+                  datacenter:
+                    const: IAD1
+              then:
+                properties:
+                  app_be_vlan:
+                    title: IAD1 BE VLAN
+                    type: integer
+                    description: Backend VLAN.
+                    enum:
+                      - 100
+                      - 101
+                      - 102
+                      - 103
+                      - 104
+                      - 105
+                      - 106
+                      - 701
+                      - 706
+                      - 800
+                      - 801
+                      - 802
+                      - 803
+                      - 804
+                      - 806
+                      - 807
+                      - 808
+                      - 810
+                      - 811
+                      - 812
+                      - 813
+                      - 814
+                      - 815
+                      - 822
+                      - 823
+                      - 824
+                      - 825
+                      - 827
+                      - 829
+                      - 1101
+                      - 1102
+                      - 1201
+                      - 1202
+                      - 1301
+                      - 1302
+                      - 2101
+                      - 2102
+                      - 2111
+                      - 2112
+                      - 2113
+                      - 2201
+                      - 2202
+                      - 2203
+                      - 2211
+                      - 2212
+                      - 2213
+                      - 2214
+                      - 2231
+                      - 2241
+                      - 2301
+                      - 2302
+                      - 2406
+                      - 3001
+                      - 3002
+                      - 3011
+                      - 3012
+
+                  app_fe_vlan:
+                    title: IAD1 FE VLAN
+                    type: integer
+                    description: Frontend VLAN.
+                    default: 0
+                    enum:
+                      - 0
+                      - 901
+                      - 902
+                      - 2901
+                      - 2911
+                      - 2912
+                  storage_vlan:
+                    title: IAD1 Storage VLAN
+                    type: integer
+                    description: Storage VLAN.
+                    default: 0
+                    enum:
+                      - 0
+                      - 501
+                  cluster_index:
+                    title: IAD1 Cluster Index
+                    type: integer
+                    description: Select Cluster Index based on Datacenter.
+                    enum:
+                      - 0
+                      - 1
+                    enumNames:
+                      - IAD1D-CORESVC
+                      - IAD1C-RD01
+                # You can use additional fields of parameters within conditional parameters such as required.
+                required:
+                  - app_be_vlan
+                  - app_fe_vlan
+                  - storage_vlan
+            - if:
+                properties:
+                  datacenter:
+                    const: IAD3
+              then:
+                properties:
+                  app_be_vlan:
+                    title: IAD3 BE VLAN
+                    type: integer
+                    description: Backend VLAN.
+                    enum:
+                      - 1000
+                      - 1001
+                      - 1004
+                      - 1005
+                      - 1006
+                      - 1007
+                      - 1008
+                  app_fe_vlan:
+                    title: IAD3 FE VLAN
+                    type: integer
+                    description: Frontend VLAN.
+                    default: 0
+                    enum:
+                      - 0
+                      - 1011
+                      - 1012
+                      - 1013
+                  storage_vlan:
+                    title: IAD3 Storage VLAN
+                    type: integer
+                    description: Storage VLAN.
+                    default: 0
+                    enum:
+                      - 0
+                  cluster_index:
+                    title: IAD3 Cluster Index
+                    type: integer
+                    description: Select Cluster Index based on Datacenter.
+                    enum:
+                      - 0
+                    enumNames:
+                      - MISSING
+                # You can use additional fields of parameters within conditional parameters such as required.
+                required:
+                  - app_be_vlan
+                  - app_fe_vlan
+                  - storage_vlan
+    - title: More setting
+      #required:
+      #  - default_blaze_user_list
+      #  - add more in this secction
+      properties:
+        app_name_mod:
+          title: App Name Mod
+          type: string
+          description: Type of server.
+          #ui:help: "example: 'app'"
+          default: app
+          enum:
+            - app
+        default_blaze_user_list:
+          title: Default Blaze User List
+          type: array
+          description: List of blaze users.
+          ui:help: 'example: [{ "name": "fifa", "id": "530" }, { "name": "gs-logs", "id": "60025" }, { "name": "gos-ops", "id": "500" }]'
+          minItems: 0
+          ui:options:
+            addable: true
+            orderable: true
+            removable: true
+          items:
+            type: object
             properties:
-              buildBoxType:
-                const: VM
-                
-              clusterEnv:
-                title: Cluster Environment
+              user:
+                title: User
                 type: string
-                description: "Cluster build example: 'Prod', 'Poc', 'LT', 'Int'"
-                default: POC
-                enum:
-                  - POC
-                  - Int
-                  - LT
-                  - PROD
-                uniqueItems: true
+                description: Blaze User Name.
+                #default: value3
+                #enum:
+                #  - value1
+                #  - value2
+                #  - value3
+              id:
+                title: ID
+                type: integer
+                description: Blaze User ID.
+        app_chef_version:
+          title: App Chef Version
+          type: integer
+          description: Chef version required for current build.
+          default: 17
+          enum:
+            - 12
+            - 16
+            - 17
+        techops_base_version:
+          title: TechOps Base Version
+          type: number
+          description: Techops Base Policy Version.
+          ui:help: 'example: 4.0.0 *default is latest tag*'
+        app_vm_cpu:
+          title: App VM CPU
+          type: integer
+          description: Num of CPU required for the current build.
+          enum:
+            - 2
+            - 4
+            - 8
+        app_vm_memory:
+          title: App VM Memory
+          type: integer
+          description: Memory required for the current build.
+          enum:
+            - 4
+            - 8
+            - 16
+            - 32
+            - 64
+        vm_os:
+          title: VM Operative System
+          type: string
+          description: VM OS required for the current build.
+          ui:help: "example: 'CentOS7.7'"
+        app_vm_disk_1_size:
+          title: App Disk1 Size
+          type: string
+          description: 'Disk1 size for current build should be defined in the format "X GB"'
+          ui:help: "example: '60 GB'"
+        techops_tf_tag:
+          title: TechOps TF Tag
+          type: string
+          description: TechOps Terraform modules version tag for compute file of the current build.
+          ui:help: 'For reference: https://src.ent.ea.com/terraform-modules/techops/-/tags'
+        iteration:
+          title: Iteration
+          type: integer
+          description: Iteration or Year.
+          ui:help: "example: '2020', '2021'"
+    - title: Final VM settings
+      #required:
+      #  - default_blaze_user_list
+      #  - add more in this secction
+      properties:
+        d42_subenv:
+          title: D42 Subenv
+          type: string
+          description: Sub environment of the build.
+          ui:help: "example: 'DevTest', 'GenCert'"
+        d42_studio:
+          title: D42 Studio
+          type: string
+          description: Studio Name from buildsheet.
+          ui:help: "example: 'Maxis', 'EA Sports'"
+        d42_service:
+          title: D42 Service
+          type: string
+          description: Service Name from Buildsheet.
+          ui:help: "example: 'Blaze', 'Database-MySQL'"
+        d42_projectcode:
+          title: D42 Projectcode
+          type: string
+          description: Project Code from Buildsheet.
+          ui:help: "example: '110696', '110697'"
+        cert_authority:
+          title: Cert Authority
+          type: integer
+          description: SSL Authority.
+          enum:
+            - 2011
+            - 2013
+            - 2015
+          #ui:help: '2015 or 2013 or 2011 example: 2015'
+        mnt_dir:
+          title: Mount Directory
+          type: string
+          description: Storage mount directory path.
+          ui:help: 'example: "["bckp","temp","data","log]"'
+        volume_size:
+          title: Volume Size
+          type: string
+          description: Storage Volume Size in GB.
+          ui:help: 'example: "["10","20","20","10"]"'
+        aggr_type:
+          title: Aggr Type
+          type: string
+          description: HDD or SSD.
+          ui:help: 'example: "["hdd","ssd","hdd","ssd"]"'
+        add_storage:
+          title: Add storage
+          type: boolean
+          description: Default option to add storage without chef.
+          default: false
+          ui:help: Default option to add storage without chef.
+        gs_blaze_login_access:
+          title: GS Blaze Login Access
+          type: array
+          description: Blaze login access for users.
+          ui:help: 'example: "["gos-qa","gs-logs","gos-ops","gos-tools"]"'
+          minItems: 0
+          ui:options:
+            addable: true
+            orderable: true
+            removable: true
+          items:
+            type: object
+            properties:
               name:
                 title: Name
                 type: string
-                description: Build directory name.
-                maxLength: 25
-                ui:autofocus: true
-                #ui:help: 'Any aditional message to add.'
-              buildType:
-                title: Build Type
-                type: string
-                description: Cluster Build Type.
-                default: app
-                enum:
-                  - app
-              Datacenter:
-                title: Datacenter
-                type: string
-                description: Datacenter.
-                #default: IAD1
-                enum:
-                  - IAD1
-                  - IAD3
-                  - IAD4
-                  - EU1
-              appBEVLAN:
-                title: BE VLAN
-                type: number
-                description: Backend VLAN.
-              appFEVLAN:
-                title: FE VLAN
-                type: number
-                description: Front End VLAN.
-              storageVLAN:
-                title: Storage VLAN
-                type: number
-                description: Storage VLAN.
-              appCount:
-                title: Quantity
-                type: number
-                description: Number of servers to build.
-              title:
-                title: Title
-                type: string
-                description: "Required build title example: 'MADDEN','FIFA','NBA'"
-                #we can setup a defined list
-              vmOwner:
-                title: VM Owner
-                type: string
-                description: "VM owner for current build example: 'Madden'"
-                #can we use a def. list?
-              vmGroup:
-                title: VM Group
-                type: string
-                description: "VM group for current build example: 'Madden 21'"
-              franchise:
-                title: Franchise
-                type: string
-                description: "Franchise for current build example: 'Madden'"
-              chefPolicyGroup:
-                title: Chef Policy Group
-                type: string
-                description: "Chef policy expects: 'title-environment' example: 'madden21 Lt'"
-              chefServerType:
-                title: Chef Server Type
-                type: string
-                description: "Chef server env type for current build expects: 'production','integration'"
-                #can we use list?
-              defaultBlazeUserList:
-                title: Default Blaze User List
-                type: array
-                minItems: 0
-                ui:options:
-                  addable: true
-                  orderable: true
-                  removable: true
-                items:
-                  type: object
-                  properties:
-                    user:
-                      title: User
-                      type: string
-                      description: Blaze User Name
-                      #default: value3
-                      #enum:
-                      #  - value1
-                      #  - value2
-                      #  - value3
-                    id:
-                      title: ID
-                      type: number
-                      description: Blaze User ID
-              appChefVer:
-                title: App Chef Version
-                type: number
-                description: Chef version required for current build
-                default: 17
-                enum:
-                  - 12
-                  - 16
-                  - 17
-              techOpsBaseVer:
-                title: TechOps Base Version
-                type: number
-                description: Techops Base Policy Version
-                ui:help: "example: 4.0.0 *default is latest tag*"
-              clusterIndex:
-                title: Cluster Index
-                type: number
-                description: Select Cluster Index based on Datacenter
-                ui:help: 'For Reference: https://src.ent.ea.com/terraform-modules/techops/-/blob/master/CHANGELOG.md#cluster-index-table'
-              iteration:
-                title: Iteration
-                type: number
-                description: "Iteration or Year example: '2020', '2021'"
-              d42SubEnv:
-                title: D42 Subenv
-                type: string
-                description: "Sub environment of the build example: 'DevTest', 'GenCert'"
-              d42Studio:
-                title: D42 Studio
-                type: string
-                description: "Studio Name from buildsheet example: 'Maxis', 'EA Sports'"
-              d42Service:
-                title: D42 Service
-                type: string
-                description: "Service Name from Buildsheet example: 'Blaze', 'Database-MySQL'"
-              d42ProjectCode:
-                title: D42 Projectcode
-                type: string
-                description: "Project Code from Buildsheet example: '110696', '110697'"
-              certAuth:
-                title: Cert Authority
-                type: number
-                description: SSL Authority
-                enum:
-                  - 2011
-                  - 2013
-                  - 2015
-                #ui:help: '2015 or 2013 or 2011 example: 2015'
-              mntDir:
-                title: Mount Directory
-                type: string
-                description: Storage mount directory path
-                ui:help: 'example: "["bckp","temp","data","log]"'
-              volSize:
-                title: Volume Size
-                type: string
-                description: Storage Volume Size in GB
-                ui:help: 'example: "["10","20","20","10"]"'
-              aggrType:
-                title: Aggr Type
-                type: string
-                description: HDD or SSD
-                ui:help: 'example: "["hdd","ssd","hdd","ssd"]"'
-              addStorage:
-                title: Add storage
-                type: boolean
-                #description: Default option to add storage without chef
-                default: false
-                ui:help: Default option to add storage without chef
-              
-                  
-          - required:
-              - clusterEnv
-              #- name
-              #- buildType
-              #- Datacenter
-              #- appBEVLAN
+                description: Name of LDAP group.
+        cookbook_dynamic_list:
+          title: Cookbook Dynamic List
+          type: array
+          description: Array of Hash that include Cookbook name which need to be added.
+          ui:help: 'example: [{ "name": "syseng Kevlar", "version": "0.1.4" }, { "name": "gs Sharedapp", "version": "2020.0.3" }]'
+          minItems: 0
+          ui:options:
+            addable: true
+            orderable: true
+            removable: true
+          items:
+            type: object
             properties:
-              buildBoxType:
-                const: BM
-              clusterEnv:
-                title: Cluster Environment
+              name:
+                title: Name
                 type: string
-                description: "Cluster build example: 'Prod', 'Poc', 'LT', 'Int'"
-                enum:
-                  - POC
-                  - Int
-                  - LT
-                  - PROD
-              uniqueItems: true
+                description: Name of Cookbook.
+                #default: value3
+                #enum:
+                #  - value1
+                #  - value2
+                #  - value3
+              version:
+                title: Version
+                type: number
+                description: Version of Cookbook.
+        gs_blaze_version:
+          title: GS Blaze Version
+          type: number
+          description: GS Blaze cookbook version.
+          ui:help: 'example : "gs Blaze Version": "0.1.6"'
+        dynamic_attributes:
+          title: Dynamic Attributes
+          type: array
+          description: Policyfile default and override attributes required for the build.
+          ui:help: 'for referencehttps://developer.ea.com/display/TODS/Blaze+on+Premise#0c5b8968bfdd454ba2de19d7b8cc1fd4 expects: "Hash"'
+          minItems: 0
+          ui:options:
+            addable: true
+            orderable: true
+            removable: true
+          items:
+            type: object
+            properties:
+              attribute:
+                title: Attribute
+                type: string
+                description: Attribute name.
+                ui:help: 'example: "default["deploy"]["no_internet"]"'
+                #default: value3
+                #enum:
+                #  - value1
+                #  - value2
+                #  - value3
+              value:
+                title: Value
+                type: string
+                description: Attribute value.
+                ui:help: 'example: "true"'
 
-  - title: Choose a location
-    required:
-      - repoUrl
-    properties:
-      repoUrl:
-        title: Repository Location
-        type: string
-        ui:field: RepoUrlPicker
-        ui:options:
-          allowedHosts:
-            - github.com
-steps:
-  - id: fetch-base
-    name: Fetch Base
-    action: fetch:template
-    input:
-      url: ./template
-      values:
-        name: ${{parameters.name}}
